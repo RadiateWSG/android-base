@@ -3,11 +3,11 @@ package com.being.base.http;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.being.base.Constant;
 import com.being.base.http.callback.ResponseCallback;
 import com.being.base.http.exception.HttpRequestException;
+import com.being.base.http.intercept.TryCacheInterceptor;
 import com.being.base.log.NHLog;
 import com.being.base.utils.DeviceInfoUtils;
 
@@ -86,6 +86,7 @@ public class AsyncOkHttp {
                 .dns(Dns.SYSTEM)
                 .build();
         setupInceptor();
+
     }
 
     public void setSslSocketFactory(SSLSocketFactory sslSocketFactory) {
@@ -104,6 +105,14 @@ public class AsyncOkHttp {
 
     public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         mOkHttpClient = mOkHttpClient.newBuilder().hostnameVerifier(hostnameVerifier).build();
+    }
+
+    public void addInterceptor(Interceptor interceptor) {
+        mOkHttpClient = mOkHttpClient.newBuilder().addInterceptor(interceptor).build();
+    }
+
+    public void addNetworkInterceptor(Interceptor interceptor) {
+        mOkHttpClient = mOkHttpClient.newBuilder().addNetworkInterceptor(interceptor).build();
     }
 
     public CallHandler post(String url, RequestParams requestParams, ResponseCallback responseCallback) {
@@ -128,10 +137,6 @@ public class AsyncOkHttp {
                 .url(urlWithQueryString)
                 .get();
         setHeader(builder, requestParams);
-//        if (!NetworkUtils.isConnected()) {
-//            builder.cacheControl(CacheControl.FORCE_CACHE);
-//            NHLog.d("force offline cacheResponse for request: %s", builder.toString());
-//        }
         return doExecute(builder, responseCallback);
     }
 
@@ -152,10 +157,6 @@ public class AsyncOkHttp {
     }
 
     public CallHandler doExecute(Request.Builder requestBuilder, final ResponseCallback responseCallback) {
-        if (requestBuilder.build().method().equalsIgnoreCase("get")) {
-            mOkHttpClient = mOkHttpClient.newBuilder()
-                    .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR).build();
-        }
         requestBuilder.addHeader("User-Agent", DeviceInfoUtils.getUserAgent());
         Request request = requestBuilder.build();
         responseCallback.setRequest(request);
@@ -176,9 +177,7 @@ public class AsyncOkHttp {
             newCall.enqueue(new Callback() {
                 @Override
                 public void onFailure(final Call call, final IOException e) {
-                    if (!loadCache(call, responseCallback, callHandler)) {
-                        processFailure(call, e, responseCallback, callHandler);
-                    }
+                    processFailure(call, e, responseCallback, callHandler);
                 }
 
                 @Override
@@ -200,6 +199,7 @@ public class AsyncOkHttp {
 
     /**
      * 解析Response数据
+     *
      * @param call
      * @param response
      * @param responseCallback
@@ -207,7 +207,6 @@ public class AsyncOkHttp {
     private void processResponse(final Call call, final Response response,
                                  final ResponseCallback responseCallback, final CallHandler callHandler) {
         final OkHttpClient.Builder builder = mOkHttpClient.newBuilder();
-        builder.networkInterceptors().remove(REWRITE_CACHE_CONTROL_INTERCEPTOR);
         mOkHttpClient = builder.build();
         Object gsonType = null;
         Exception exception = null;
@@ -255,6 +254,7 @@ public class AsyncOkHttp {
 
     /**
      * 网络请求成功
+     *
      * @param responseCallback
      * @param finalGsonType
      * @param response
@@ -279,6 +279,7 @@ public class AsyncOkHttp {
 
     /**
      * 网络请求失败
+     *
      * @param call
      * @param e
      * @param responseCallback
@@ -287,7 +288,6 @@ public class AsyncOkHttp {
                                 final ResponseCallback responseCallback, final CallHandler callHandler) {
         NHLog.e("request fail", e);
         final OkHttpClient.Builder builder = mOkHttpClient.newBuilder();
-        builder.networkInterceptors().remove(REWRITE_CACHE_CONTROL_INTERCEPTOR);
         mOkHttpClient = builder.build();
         final HttpRequestException execption = new HttpRequestException(
                 HttpRequestException.format(call.request(), null), e);
@@ -303,27 +303,27 @@ public class AsyncOkHttp {
         }
     }
 
-    private boolean loadCache(final Call call, final ResponseCallback responseCallback,
-                              CallHandler callHandler) {
-        if (call.request().method().equalsIgnoreCase("post")) {
-            return false;
-        }
-        boolean result = false;
-        //发生IO异常时,尝试从Http Cache中获取数据
-        Request request = call.request().newBuilder().cacheControl(CacheControl.FORCE_CACHE).build();
-        Response forceCacheResponse;
-        try {
-            forceCacheResponse = mOkHttpClient.newCall(request).execute();
-            if (forceCacheResponse.code() != 504) {
-                processResponse(call, forceCacheResponse, responseCallback, callHandler);
-                responseCallback.setCacheResponse(true);
-                result = true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+//    private boolean loadCache(final Call call, final ResponseCallback responseCallback,
+//                              CallHandler callHandler) {
+//        if (call.request().method().equalsIgnoreCase("post")) {
+//            return false;
+//        }
+//        boolean result = false;
+//        //发生IO异常时,尝试从Http Cache中获取数据
+//        Request request = call.request().newBuilder().cacheControl(CacheControl.FORCE_CACHE).build();
+//        Response forceCacheResponse;
+//        try {
+//            forceCacheResponse = mOkHttpClient.newCall(request).execute();
+//            if (forceCacheResponse.code() != 504) {
+//                processResponse(call, forceCacheResponse, responseCallback, callHandler);
+//                responseCallback.setCacheResponse(true);
+//                result = true;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
 
     private void callExceptionFail(Response response, ResponseCallback responseCallback, Exception exception,
                                    CallHandler callHandler, Object jsonType) {
@@ -385,18 +385,7 @@ public class AsyncOkHttp {
 
     }
 
-    /** Dangerous interceptor that rewrites the server's cache-control header. */
-    private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
-        @Override public Response intercept(Chain chain) throws IOException {
-            Request request = chain.request();
-            Response originalResponse = chain.proceed(request);
-            if ("get".equalsIgnoreCase(request.method())) {
-                return originalResponse.newBuilder()
-                        .header("Cache-Control", "max-age=3")
-                        .build();
-            } else {
-                return originalResponse;
-            }
-        }
-    };
+    public OkHttpClient getOkHttpClient() {
+        return mOkHttpClient;
+    }
 }

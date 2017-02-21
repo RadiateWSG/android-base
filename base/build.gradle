@@ -9,7 +9,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
-        versionName "0.1.4"
+        versionName "0.2.0"
     }
     buildTypes {
         release {
@@ -56,12 +56,17 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.birbit:android-priority-jobqueue:2.0.1'
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:v2.8.0'
-    compile 'com.facebook.fresco:fresco:1.0.1'
-    compile 'com.facebook.fresco:animated-webp:1.0.1'
-    compile 'com.facebook.fresco:webpsupport:1.0.1'
+    compile 'com.facebook.fresco:fresco:1.1.0'
+    compile 'com.facebook.fresco:animated-webp:1.1.0'
+    compile 'com.facebook.fresco:webpsupport:1.1.0'
     compile('jp.wasabeef:fresco-processors:2.0.0') {
         exclude group: 'jp.wasabeef.fresco.processors.gpu'
     }
+    compile ('com.squareup.retrofit2:retrofit:2.1.0', {
+        exclude group: 'com.squareup.okhttp3:okhttp'
+    })
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
 }
 
 // build a jar with source files
