@@ -2,6 +2,7 @@ package com.being.base.utils;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,9 +17,10 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.being.base.log.NHLog;
-
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.util.List;
 
 /**
  * 和Android系统相关的工具类
@@ -277,6 +279,43 @@ public class AndroidUtils {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(file), "video/mp4");
         context.startActivity(intent);
+    }
+
+    /**
+     * 获取当前进程名
+     * @return
+     */
+    public static String getProcessName() {
+        try {
+            File file = new File("/proc/" + android.os.Process.myPid() + "/" + "cmdline");
+            BufferedReader mBufferedReader = new BufferedReader(new FileReader(file));
+            String processName = mBufferedReader.readLine().trim();
+            mBufferedReader.close();
+            return processName;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 获取该pid对应的进程名
+     * @param cxt 上下文环境
+     * @param pid 进程pid
+     * @return
+     */
+    public static String getProcessName(Context cxt, int pid) {
+        ActivityManager am = (ActivityManager) cxt.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = am.getRunningAppProcesses();
+        if (runningApps == null) {
+            return null;
+        }
+        for (ActivityManager.RunningAppProcessInfo procInfo : runningApps) {
+            if (procInfo.pid == pid) {
+                return procInfo.processName;
+            }
+        }
+        return getProcessName();
     }
 
     /**

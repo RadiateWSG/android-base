@@ -15,6 +15,7 @@ import okhttp3.ResponseBody;
  * 后端返回的数据可能是jsonObject或者是jsonArray
  * Created by Zhp on 2015/10/8.
  */
+@SuppressWarnings("unchecked")
 public class GsonResponseCallbackImpl<T> extends ResponseCallbackImpl<T> {
 
     protected ResponseCallback<T> mResponseCallback;
@@ -22,13 +23,6 @@ public class GsonResponseCallbackImpl<T> extends ResponseCallbackImpl<T> {
     public GsonResponseCallbackImpl(ResponseCallback responseCallback) {
         super(responseCallback.isSync());
         mResponseCallback = responseCallback;
-    }
-
-    @Override
-    public void onStart() {
-        mResponseCallback.setRequest(mRequest);
-        super.onStart();
-        mResponseCallback.onStart();
     }
 
     /**
@@ -92,8 +86,4 @@ public class GsonResponseCallbackImpl<T> extends ResponseCallbackImpl<T> {
         }
     }
 
-    @Override
-    public void setCacheResponse(boolean cacheResponse) {
-        mResponseCallback.setCacheResponse(cacheResponse);
-    }
 }

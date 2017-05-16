@@ -11,7 +11,7 @@ import okhttp3.Response;
  * Created by zhangpeng on 17/2/21.
  */
 
-public class ForceCacheInterceptor implements Interceptor {
+public class RewriteCacheHeaderInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {

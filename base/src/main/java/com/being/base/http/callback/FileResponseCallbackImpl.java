@@ -39,14 +39,6 @@ public abstract class FileResponseCallbackImpl extends ResponseCallback<File> {
     }
 
     /**
-     * 请求开始
-     */
-    @Override
-    public void onStart() {
-
-    }
-
-    /**
      * 请求进度
      *
      * @param bytesWritten 已写入
@@ -101,17 +93,6 @@ public abstract class FileResponseCallbackImpl extends ResponseCallback<File> {
      */
     @Override
     public abstract void onFail(int statusCode, File failDate, Throwable error);
-
-    /**
-     * 本地缓存获取成功
-     *
-     * @param file             本地缓存数据
-     * @param time             缓存被修改的时间
-     */
-    @Override
-    public void onCacheLoaded(File file, long time) {
-
-    }
 
     /**
      * 请求完成，无论失败或者成功，都会调用该方法。

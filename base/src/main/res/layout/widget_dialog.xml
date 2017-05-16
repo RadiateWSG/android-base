@@ -41,7 +41,7 @@
         android:layout_height="match_parent"
         android:listSelector="@drawable/diaglog_list_selector"
         android:cacheColorHint="@android:color/transparent"
-        android:divider="@color/dark_gray"
+        android:divider="@color/gray"
         android:dividerHeight="1px"
         android:footerDividersEnabled="false"/>
 
@@ -49,7 +49,7 @@
         android:id="@+id/dialog_content_seperator"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/dark_gray"/>
+        android:background="@color/gray"/>
 
     <LinearLayout
         android:id="@+id/dialog_bottom_btn_layout"

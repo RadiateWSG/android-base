@@ -1,0 +1,13 @@
+engines:
+  # ... CONFIG CONTENT ...
+  checkstyle:
+    enabled: true
+    # ... CONFIG CONTENT ...
+    checks:
+      com.puppycrawl.tools.checkstyle.checks.naming.MemberNameCheck:
+        enabled: false
+      com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck:
+        enabled: false
+      com.puppycrawl.tools.checkstyle.checks.javadoc.NonEmptyAtclauseDescriptionCheck:
+        enabled: false
+# ... CONFIG CONTENT ...

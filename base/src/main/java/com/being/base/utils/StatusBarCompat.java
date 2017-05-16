@@ -6,12 +6,16 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Created by qingxuzhou on 16/7/11.
@@ -22,10 +26,20 @@ public class StatusBarCompat {
 
     private static int STATUSBARHEIGHT = 0;
 
+    private static boolean sIsMiui;
+
+    static {
+        try {
+            Class<?> sysClass = Class.forName("android.os.SystemProperties");
+            Method getStringMethod = sysClass.getDeclaredMethod("get", String.class);
+            sIsMiui = !TextUtils.isEmpty((CharSequence) getStringMethod.invoke(sysClass, "ro.miui.ui.version.name"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static boolean statusCanChanged() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            return true;
-        return false;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
 
     @TargetApi(19)
@@ -33,7 +47,7 @@ public class StatusBarCompat {
         Window window = activity.getWindow();
         ViewGroup mContentView = (ViewGroup) activity.findViewById(Window.ID_ANDROID_CONTENT);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (statusCanChanged()) {
             //First translucent status bar.
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -75,6 +89,7 @@ public class StatusBarCompat {
                     mDecorView.setTag(true);
                 }
             }
+            setMiuiStatusBarDarkMode(true, activity);
         }
     }
 
@@ -97,7 +112,7 @@ public class StatusBarCompat {
             ViewCompat.setFitsSystemWindows(mChildView, false);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (statusCanChanged()) {
             int statusBarHeight = getStatusBarHeight(activity);
 
             //First translucent status bar.
@@ -132,6 +147,27 @@ public class StatusBarCompat {
                     }
                     mDecorView.setTag(false);
                 }
+            }
+        }
+    }
+
+    /**
+     * set status bar darkMode for miui
+     * @param darkMode
+     * @param activity
+     */
+    public static void setMiuiStatusBarDarkMode(boolean darkMode, Activity activity) {
+        if (sIsMiui) {
+            Class<? extends Window> clazz = activity.getWindow().getClass();
+            try {
+                int darkModeFlag = 0;
+                Class<?> layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
+                Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
+                darkModeFlag = field.getInt(layoutParams);
+                Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
+                extraFlagField.invoke(activity.getWindow(), darkMode ? darkModeFlag : 0, darkModeFlag);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

@@ -24,17 +24,8 @@ public abstract class ResponseCallbackImpl<GSON_TYPE> extends ResponseCallback<G
         super();
     }
 
-    /**
-     * useCache为true时，会在网络断开时获取cache数据返回
-     * @param useCache
-     */
-    public ResponseCallbackImpl(boolean useCache) {
-        super(useCache);
-    }
-
-    @Override
-    public void onStart() {
-
+    public ResponseCallbackImpl(boolean sync) {
+        super(sync);
     }
 
     @Override
@@ -59,11 +50,6 @@ public abstract class ResponseCallbackImpl<GSON_TYPE> extends ResponseCallback<G
     @Override
     public GSON_TYPE parseResponse(Response response) throws IOException {
         return null;
-    }
-
-    @Override
-    public void onCacheLoaded(GSON_TYPE responseJsonType, long time) {
-
     }
 
     @Override

@@ -2,12 +2,10 @@ package com.being.base.http;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.being.base.Constant;
 import com.being.base.http.callback.ResponseCallback;
 import com.being.base.http.exception.HttpRequestException;
-import com.being.base.http.intercept.TryCacheInterceptor;
 import com.being.base.log.NHLog;
 import com.being.base.utils.DeviceInfoUtils;
 
@@ -17,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Cache;
-import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Dispatcher;
@@ -31,7 +29,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * 异步OkHttp
@@ -85,13 +82,17 @@ public class AsyncOkHttp {
                 .dispatcher(dispatcher)
                 .dns(Dns.SYSTEM)
                 .build();
-        setupInceptor();
-
     }
 
     public void setSslSocketFactory(SSLSocketFactory sslSocketFactory) {
         if (mOkHttpClient != null) {
             mOkHttpClient = mOkHttpClient.newBuilder().sslSocketFactory(sslSocketFactory).build();
+        }
+    }
+
+    public void setSslSocketFactory(SSLSocketFactory sslSocketFactory, X509TrustManager x509TrustManager) {
+        if (mOkHttpClient != null) {
+            mOkHttpClient = mOkHttpClient.newBuilder().sslSocketFactory(sslSocketFactory, x509TrustManager).build();
         }
     }
 
@@ -346,20 +347,6 @@ public class AsyncOkHttp {
 
     public void cancelAll() {
         mOkHttpClient.dispatcher().cancelAll();
-    }
-
-    private void setupInceptor() {
-        if (Constant.DEBUG) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                @Override
-                public void log(String message) {
-                    Log.v("OkHttp", message);
-                }
-            });
-            //下载文件时，如果使用BODY级别，会将整个ResponseBody缓存到内存，造成oom
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            mOkHttpClient = mOkHttpClient.newBuilder().addInterceptor(logging).build();
-        }
     }
 
     private void setHeader(Request.Builder builder, RequestParams params) {

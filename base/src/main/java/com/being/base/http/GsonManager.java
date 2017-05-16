@@ -10,7 +10,7 @@ import com.google.gson.GsonBuilder;
  */
 public class GsonManager {
 
-    private static Gson mGson;
+    private static Gson mGson = new GsonBuilder().create();
 
     /**
      * 获取默认配置的Gson对象，
@@ -19,15 +19,6 @@ public class GsonManager {
      * @return 默认配置的Gson对象
      */
     public static Gson getGson() {
-        if (mGson == null) {
-            synchronized (GsonManager.class) {
-                if (mGson == null) {
-                    GsonBuilder builder = new GsonBuilder();
-//                    builder.registerTypeAdapter(FameMessage.TextEntity.class, new FameMessage.TextEntityDeserializer());
-                    mGson = builder.create();
-                }
-            }
-        }
         return mGson;
     }
 

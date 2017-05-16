@@ -25,6 +25,7 @@ import com.being.base.R;
  * @author Administrator
  *
  */
+@SuppressWarnings("unused")
 public class NHDialog extends Dialog {
 
 	protected NHDialog(Context context) {
@@ -39,10 +40,10 @@ public class NHDialog extends Dialog {
 
 		private Context context;
 
-		private String title;
-		private String content;
-		private String leftBtnStr;
-		private String rightBtnStr;
+		private CharSequence title;
+		private CharSequence content;
+		private CharSequence leftBtnStr;
+		private CharSequence rightBtnStr;
 		private OnClickListener leftBtnClickListener;
 		private OnClickListener rightBtnClickListener;
 		private int curIndex;
@@ -54,7 +55,7 @@ public class NHDialog extends Dialog {
 			this.context = context;
 		}
 
-		public Builder setTitle(String title) {
+		public Builder setTitle(CharSequence title) {
 			this.title = title;
 			return this;
 		}
@@ -64,7 +65,7 @@ public class NHDialog extends Dialog {
             return this;
         }
 
-		public Builder setContent(String content) {
+		public Builder setContent(CharSequence content) {
 			this.content = content;
 			return this;
 		}
@@ -74,7 +75,7 @@ public class NHDialog extends Dialog {
             return this;
         }
 
-		public Builder setLeftBtn(String leftBtnStr, OnClickListener leftBtnClickListener) {
+		public Builder setLeftBtn(CharSequence leftBtnStr, OnClickListener leftBtnClickListener) {
 			this.leftBtnStr = leftBtnStr;
 			this.leftBtnClickListener = leftBtnClickListener;
 			return this;
@@ -84,7 +85,7 @@ public class NHDialog extends Dialog {
             return setLeftBtn(context.getString(leftBtnId), leftBtnClickListener);
         }
 
-		public Builder setRightBtn(String rightBtnStr, OnClickListener rightBtnClickListener) {
+		public Builder setRightBtn(CharSequence rightBtnStr, OnClickListener rightBtnClickListener) {
 			this.rightBtnStr = rightBtnStr;
 			this.rightBtnClickListener = rightBtnClickListener;
 			return this;
@@ -278,7 +279,7 @@ public class NHDialog extends Dialog {
 		return (int) (dpValue * density + 0.5f);
 	}
 
-	public static interface ListDialogInterface<T> {
+	public interface ListDialogInterface<T> {
 		public CharSequence[] getData();
 
 		public View getView(int position, T item, View convertView);

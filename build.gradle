@@ -6,10 +6,9 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.1'
         //noinspection GradleDynamicVersion
         classpath 'com.qiniu:qiniu-java-sdk:7.1.+'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 }
 

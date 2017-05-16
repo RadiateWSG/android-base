@@ -1,7 +1,9 @@
 package com.being.base.ui.widget.recyclerview;
 
+import android.support.annotation.LayoutRes;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.util.ListUpdateCallback;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -28,14 +30,19 @@ public abstract class SimpleRecyclerAdapter<T, K extends AbstractViewHolder> ext
 
     @Override
     protected K onCreateDefViewHolder(ViewGroup parent, int viewType) {
-        if (viewType != 0) {
-            return super.onCreateDefViewHolder(parent, viewType);
-        } else {
-            return createViewHolder(parent);
+        K k = onCreateAbstractViewHolder(parent, viewType);
+        if (k == null) {
+            k = super.onCreateDefViewHolder(parent, viewType);
         }
+        return k;
     }
 
-    protected abstract K createViewHolder(ViewGroup parent);
+    protected abstract K onCreateAbstractViewHolder(ViewGroup parent, int viewType);
+
+    @Override
+    protected K createBaseViewHolder(View view) {
+        return (K) new VH<T>(view);
+    }
 
     @Override
     protected void convert(K helper, T item) {
@@ -150,6 +157,22 @@ public abstract class SimpleRecyclerAdapter<T, K extends AbstractViewHolder> ext
         @Override
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
             return true;
+        }
+    }
+
+    private static class VH<T> extends AbstractViewHolder<T> {
+
+        public VH(View view) {
+            super(view);
+        }
+
+        public VH(ViewGroup parent, @LayoutRes int id) {
+            super(parent, id);
+        }
+
+        @Override
+        public void bindDate(T data) {
+
         }
     }
 

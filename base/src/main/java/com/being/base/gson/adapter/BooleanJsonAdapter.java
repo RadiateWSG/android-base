@@ -1,5 +1,6 @@
 package com.being.base.gson.adapter;
 
+import com.being.base.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
@@ -21,7 +22,8 @@ public class BooleanJsonAdapter extends TypeAdapter<Boolean> {
 
     @Override
     public Boolean read(JsonReader in) throws IOException {
-        return in.nextInt() != 0;
+        String value = in.nextString();
+        return !StringUtils.isEmpty(value) && Integer.parseInt(value) != 0;
     }
 
     static class User {

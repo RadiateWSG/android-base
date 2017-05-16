@@ -2,6 +2,7 @@ package com.being.base.http;
 
 import android.os.Handler;
 
+import com.being.base.http.callback.ICallback;
 import com.being.base.http.callback.ResponseCallback;
 
 import java.io.IOException;

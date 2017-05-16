@@ -42,7 +42,7 @@ public class DialogUtils {
      * @param btnListener
      * @return
      */
-    public static Dialog showDialog(Context context, String title, String content, String btnStr, DialogInterface.OnClickListener btnListener){
+    public static Dialog showDialog(Context context, CharSequence title, CharSequence content, CharSequence btnStr, DialogInterface.OnClickListener btnListener){
         return showDialog(context, title, content, btnStr, btnListener, null, null);
     }
     
@@ -57,7 +57,7 @@ public class DialogUtils {
      * @param rightBtnStr
      * @param rightBtnListener
      */
-    public static Dialog showDialog(Context context, String title, String content, String leftBtnStr, final DialogInterface.OnClickListener leftBtnListener, String rightBtnStr, final DialogInterface.OnClickListener rightBtnListener) {
+    public static Dialog showDialog(Context context, CharSequence title, CharSequence content, CharSequence leftBtnStr, final DialogInterface.OnClickListener leftBtnListener, CharSequence rightBtnStr, final DialogInterface.OnClickListener rightBtnListener) {
         if (context instanceof Activity) {
             if (((Activity) context).isFinishing()) {
                 return null;
@@ -156,7 +156,7 @@ public class DialogUtils {
      * @param itemListener
      * @return
      */
-    public static Dialog showListDialog(Context context, String title, CharSequence[] items, AdapterView.OnItemClickListener itemListener){
+    public static Dialog showListDialog(Context context, CharSequence title, CharSequence[] items, AdapterView.OnItemClickListener itemListener){
         return showListDialog(context, title, items, -1, itemListener, null, null, null, null);
     }
 
@@ -168,7 +168,7 @@ public class DialogUtils {
      * @param itemListener
      * @return
      */
-    public static Dialog showListDialogBottom(Context context, String title, CharSequence[] items, AdapterView.OnItemClickListener itemListener){
+    public static Dialog showListDialogBottom(Context context, CharSequence title, CharSequence[] items, AdapterView.OnItemClickListener itemListener){
         return showListDialogBottom(context, title, items, -1, itemListener, null, null, null, null);
     }
 
@@ -179,7 +179,7 @@ public class DialogUtils {
      * @param items
      * @return
      */
-    public static Dialog showListDialogBottom(Context context, String title, CharSequence[] items,
+    public static Dialog showListDialogBottom(Context context, CharSequence title, CharSequence[] items,
                                               AdapterView.OnItemClickListener listener, AdapterView.OnItemLongClickListener longClickListener){
         return showListDialogBottom(context, title, items, -1, listener, longClickListener, null, null, null, null);
     }
@@ -205,7 +205,7 @@ public class DialogUtils {
      * @param itemListener
      * @return
      */
-    public static Dialog showListDialog(Context context, String title, CharSequence[] items, int index, AdapterView.OnItemClickListener itemListener){
+    public static Dialog showListDialog(Context context, CharSequence title, CharSequence[] items, int index, AdapterView.OnItemClickListener itemListener){
         return showListDialog(context, title, items, index, itemListener, null, null, null, null);
     }
 
@@ -236,7 +236,7 @@ public class DialogUtils {
      * @param rightBtnListener
      * @return
      */
-    public static Dialog showListDialog(Context context, String title, CharSequence[] items, int index, AdapterView.OnItemClickListener itemListener, String leftBtnStr, DialogInterface.OnClickListener leftBtnListener, String rightBtnStr, DialogInterface.OnClickListener rightBtnListener) {
+    public static Dialog showListDialog(Context context, CharSequence title, CharSequence[] items, int index, AdapterView.OnItemClickListener itemListener, CharSequence leftBtnStr, DialogInterface.OnClickListener leftBtnListener, CharSequence rightBtnStr, DialogInterface.OnClickListener rightBtnListener) {
         NHDialog.Builder builder = new NHDialog.Builder(context);
         builder.setTitle(title);
         builder.setItems(items, index, itemListener, null);
@@ -260,8 +260,8 @@ public class DialogUtils {
      * @param rightBtnListener
      * @return
      */
-    public static Dialog showListDialogBottom(Context context, String title, CharSequence[] items, int index, AdapterView.OnItemClickListener itemListener, String leftBtnStr, DialogInterface
-            .OnClickListener leftBtnListener, String rightBtnStr, DialogInterface.OnClickListener rightBtnListener) {
+    public static Dialog showListDialogBottom(Context context, CharSequence title, CharSequence[] items, int index, AdapterView.OnItemClickListener itemListener, CharSequence leftBtnStr, DialogInterface
+            .OnClickListener leftBtnListener, CharSequence rightBtnStr, DialogInterface.OnClickListener rightBtnListener) {
         return showListDialogBottom(context, title, items, index, itemListener, null, leftBtnStr, leftBtnListener, rightBtnStr, rightBtnListener);
     }
 
@@ -279,11 +279,11 @@ public class DialogUtils {
      * @param rightBtnListener
      * @return
      */
-    public static Dialog showListDialogBottom(Context context, String title, CharSequence[] items,
+    public static Dialog showListDialogBottom(Context context, CharSequence title, CharSequence[] items,
                                               int index, AdapterView.OnItemClickListener itemListener,
                                               AdapterView.OnItemLongClickListener longClickListener,
-                                              String leftBtnStr, DialogInterface
-            .OnClickListener leftBtnListener, String rightBtnStr, DialogInterface.OnClickListener rightBtnListener) {
+                                              CharSequence leftBtnStr, DialogInterface
+            .OnClickListener leftBtnListener, CharSequence rightBtnStr, DialogInterface.OnClickListener rightBtnListener) {
         NHDialog.Builder builder = new NHDialog.Builder(context);
         builder.setTitle(title);
         builder.setItems(items, index, itemListener, longClickListener);
@@ -400,7 +400,7 @@ public class DialogUtils {
      * @param ymListDialogInterface
      * @return
      */
-    public static Dialog showCustomListDialog(Context context, String title, int index, NHDialog.ListDialogInterface ymListDialogInterface){
+    public static Dialog showCustomListDialog(Context context, CharSequence title, int index, NHDialog.ListDialogInterface ymListDialogInterface){
         NHDialog.Builder builder = new NHDialog.Builder(context);
         builder.setTitle(title);
         builder.setItems(index, ymListDialogInterface);
